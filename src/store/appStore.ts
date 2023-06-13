@@ -1,8 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query/react';
 import authSliceReducer from './auth/auth.reducer';
-import { filmsApi } from 'src/core/store/films.api';
-import filmsConfigSliceReducer, { filmsConfigSlice } from 'src/core/store/films-config.reducer';
+import filmsConfigSliceReducer, { filmsConfigSlice } from '../core/store/films-config.reducer';
+import { filmsApi } from '../core/store/films.api';
 
 export const appStore = configureStore({
   reducer: {

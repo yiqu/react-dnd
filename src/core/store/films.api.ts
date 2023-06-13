@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery, TagDescription } from '@reduxjs/toolkit/query/react';
-import { BASE_FIREBASE_URL } from 'src/shared/api/endpoints';
+import { BASE_FIREBASE_URL } from '../../../src/shared/api/endpoints';
 import { Film, FireResult } from './films.state';
 
 export const filmsPath = "movies.json";

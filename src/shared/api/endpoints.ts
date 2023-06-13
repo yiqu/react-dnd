@@ -1,0 +1,1 @@
+export const BASE_FIREBASE_URL = 'https://kq-1-1a499.firebaseio.com/';

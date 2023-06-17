@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import { FilmsConfigState } from './films.state';
+import { PokemonConfigState } from './pokemon.state';
 
-const initialState: FilmsConfigState = {
+const initialState: PokemonConfigState = {
   recentSearches: []
 };
 
-export const filmsConfigSlice = createSlice({
+export const pokemonConfigSlice = createSlice({
   name: 'filmsConfig',
   initialState,
   reducers: {
@@ -19,6 +19,6 @@ export const filmsConfigSlice = createSlice({
   }
 });
 
-export const { addRecentSearch } = filmsConfigSlice.actions;
+export const { addRecentSearch } = pokemonConfigSlice.actions;
 
-export default filmsConfigSlice.reducer;
+export default pokemonConfigSlice.reducer;

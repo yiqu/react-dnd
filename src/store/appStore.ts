@@ -1,25 +1,25 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query/react';
 import authSliceReducer from './auth/auth.reducer';
-import filmsConfigSliceReducer, { filmsConfigSlice } from '../core/store/films-config.reducer';
-import { filmsApi } from '../core/store/films.api';
+import pokemonConfigSliceReducer, { pokemonConfigSlice } from '../core/store/pokemon-config.reducer';
+import { pokemonApi } from '../core/store/pokemon.api';
 
 export const appStore = configureStore({
   reducer: {
     auth: authSliceReducer,
-    [filmsApi.reducerPath]: filmsApi.reducer,
-    [filmsConfigSlice.name]: filmsConfigSliceReducer
+    [pokemonApi.reducerPath]: pokemonApi.reducer,
+    [pokemonConfigSlice.name]: pokemonConfigSliceReducer
   },
 
   // Adding the api middleware enables caching, invalidation, polling,
   // and other useful features of `rtk-query`.
   middleware: (getDefaultMiddleware) => {
-    return getDefaultMiddleware().concat(filmsApi.middleware);
+    return getDefaultMiddleware().concat(pokemonApi.middleware);
   },
   
   devTools: {
     trace: true,
-    name: 'Movie Rank',
+    name: 'Pokemon Rank',
     actionsDenylist: ['__rtkq/focused', '__rtkq/unfocused']
   },
 });

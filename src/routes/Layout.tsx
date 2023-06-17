@@ -26,7 +26,13 @@ const Layout = () => {
 
         <Box component="main" sx={ { flexGrow: 1, bgcolor:(theme) => theme.palette.mode === 'light' ? GREY[0] : null } }>
 
-          <Grid container sx={ {bgcolor:(theme) => theme.palette.mode === 'light' ? GREY[0] : null } } xs={ 12 }>
+          <Grid container xs={ 12 } sx={ {
+            bgcolor:(theme) => theme.palette.mode === 'light' ? GREY[0] : '#000',
+            background: 'url(logo1.png)',
+            backgroundRepeat: 'no-repeat',
+            backgroundSize: '10rem',
+            backgroundPosition: '95% 100%'
+          } }>
             <LayoutWithGutter size='skinny'>
               <>
                 <TopNav />

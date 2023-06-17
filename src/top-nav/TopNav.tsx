@@ -3,7 +3,7 @@ import React, { useContext } from "react";
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import { AppBar } from '../routes/Layouts/layout-components';
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 // import { useState } from "react";
 import Brightness4Icon from '@mui/icons-material/Brightness4';
@@ -20,7 +20,7 @@ export interface TopNavProps {
 
 export default function TopNav() {
 
-  const pages = ['Films', 'About'];
+  const pages = ['Pokemons', 'About'];
 
   const location = useLocation();
   // const [title, setTitle] = useState<string>();
@@ -52,16 +52,18 @@ export default function TopNav() {
   return (
     <React.Fragment>
       <AppBar position="static" elevation={ 1 }>
-        <Container maxWidth="lg">
+        <Container maxWidth="xl">
           <Toolbar>
             <Stack direction="row" justifyContent="space-between" alignItems="center" width="100%">
               <Stack direction="row" justifyContent="start" alignItems="center">
                 <Box sx={ { flexGrow: 1, display: { xs: 'none', md: 'flex' } } }>
                   { pages.map((page) => (
                     <Button
+                      component={ Link }
+                      to={ `/${page.toLowerCase()}` }
                       key={ page }
                       onClick={ handlePageClick }
-                      sx={ { my: 2, color: 'white', display: 'block' } }
+                      sx={ { color: 'white', display: 'block' } }
                     >
                       {page}
                     </Button>

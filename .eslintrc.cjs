@@ -16,6 +16,7 @@ module.exports = {
     "@typescript-eslint/no-unused-vars": "off",
     "@typescript-eslint/no-explicit-any": "off",
     "no-empty-function": "off",
+    "no-empty": "off",
     "@typescript-eslint/no-empty-function": "off",
     "@typescript-eslint/no-empty-interface": "warn",
     "@typescript-eslint/no-non-null-assertion": "off",

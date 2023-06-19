@@ -11,7 +11,7 @@ export function scrollToElementById(id: string, timeout?: number, position?: Scr
 
 export function scrollToTop() {
   window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
-};
+}
 
 
 export function scrollToBottom() {
@@ -20,7 +20,7 @@ export function scrollToBottom() {
     left: 0,
     behavior: "smooth",
   });
-};
+}
 
 export function convertCommaDecimalNumberToNumber(num: string): number {
   if (num) {

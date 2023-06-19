@@ -10,7 +10,7 @@ import { Tooltip } from 'react-tooltip';
 import TopNav from '../top-nav/TopNav';
 import { Box } from '@mui/material';
 import LayoutWithGutter from '../shared/components/layouts/LayoutWithGutter';
-
+import { APP_TOOLTIP_ID } from '../shared/utils/constants';
 
 const Layout = () => {
   
@@ -59,7 +59,7 @@ const Layout = () => {
             }
           } }
         />
-        <Tooltip id="tooltip" place="bottom" />
+        <Tooltip id={ APP_TOOLTIP_ID } place="bottom" />
       </Box>
     </ThemeProvider>
     

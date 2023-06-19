@@ -8,10 +8,11 @@ import { useEffect } from "react";
 // import { useState } from "react";
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
-import { Box, Button, Container, PaletteMode, Stack, Tooltip } from "@mui/material";
+import { Box, Button, Container, PaletteMode, Stack } from "@mui/material";
 import ThemeContext from "../../src/theme/ThemeContext";
 import { useLocalStorage } from 'react-use';
-import { LS_APP_THEME } from "../../src/shared/utils/constants";
+import { APP_TOOLTIP_ID, LS_APP_THEME } from "../../src/shared/utils/constants";
+import { GREY } from "../theme/palette";
 
 export interface TopNavProps {
   open: boolean;
@@ -51,7 +52,7 @@ export default function TopNav() {
 
   return (
     <React.Fragment>
-      <AppBar position="static" elevation={ 1 }>
+      <AppBar position="static" elevation={ 0 }>
         <Container maxWidth="xl">
           <Toolbar>
             <Stack direction="row" justifyContent="space-between" alignItems="center" width="100%">
@@ -63,7 +64,7 @@ export default function TopNav() {
                       to={ `/${page.toLowerCase()}` }
                       key={ page }
                       onClick={ handlePageClick }
-                      sx={ { color: 'white', display: 'block' } }
+                      sx={ { color: GREY[200] } }
                     >
                       {page}
                     </Button>
@@ -71,11 +72,12 @@ export default function TopNav() {
                 </Box>
               </Stack>
 
-              <Tooltip title={ `Turn ${themeContext.currentTheme==='light'?'off':'on'} the lights` }>
-                <IconButton sx={ { ml: 1 } } color="inherit" onClick={ toggleThemeHandler }>
-                  { themeContext.currentTheme === 'dark' ? <Brightness7Icon /> : <Brightness4Icon /> }
-                </IconButton>
-              </Tooltip>
+              <IconButton sx={ { ml: 1 } } color="inherit" onClick={ toggleThemeHandler }
+                data-tooltip-id={ APP_TOOLTIP_ID }
+                data-tooltip-content={ `Turn ${themeContext.currentTheme==='light'?'off':'on'} the lights` }
+              >
+                { themeContext.currentTheme === 'dark' ? <Brightness7Icon /> : <Brightness4Icon /> }
+              </IconButton>
 
             </Stack>
           </Toolbar>

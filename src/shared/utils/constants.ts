@@ -6,3 +6,5 @@ export const TransformPageTitle: {[key: string]: string} = {
   pokemons: 'Pokemon List',
   'game-versions': 'Game Versions'
 };
+
+export const APP_TOOLTIP_ID = "app-tooltip-id";

@@ -1,6 +1,9 @@
 import { createApi, fetchBaseQuery, TagDescription } from '@reduxjs/toolkit/query/react';
 import { BASE_FIREBASE_URL } from '../../shared/api/endpoints';
-import { Pokemon, Region, RegionList } from './pokemon.state';
+import { Pokemon, Region } from './pokemon.state';
+import { PatchCollection } from '@reduxjs/toolkit/dist/query/core/buildThunks';
+import { current } from 'immer';
+
 
 export const basePath = "react-dnd";
 
@@ -21,8 +24,8 @@ export const pokemonApi = createApi({
           method: 'GET'
         };
       },
-      transformResponse: (response: RegionList, _meta, _args: void) => {
-        return response.regions;
+      transformResponse: (response: string[], _meta, _args: void) => {
+        return response;
       },
       providesTags: (result, _error, _args, _meta) => {
         const tags: TagDescription<"Region">[] = [];
@@ -67,8 +70,38 @@ export const pokemonApi = createApi({
       }
     }),
 
+    updateRegions: builder.mutation<string[], string[]>({
+      query: (args: string[]) => {
+        return {
+          url: `regions.json`,
+          method: 'PUT',
+          body: args
+        };
+      },
+      invalidatesTags: (result, error, args, meta) => {
+        return [];
+      },
+      async onQueryStarted(patchArgs: string[], apiActions) {
+        console.log(patchArgs);
+
+        const cacheList = pokemonApi.util.selectInvalidatedBy(apiActions.getState(), [{ type: RegionTag, id: 'ALL' }]);
+        const patchResults: PatchCollection[] = [];
+
+        cacheList.forEach((cache) => {
+          if (cache.endpointName === "fetchRegionList") {
+            const patchResult = apiActions.dispatch(
+              pokemonApi.util.updateQueryData('fetchRegionList', cache.originalArgs, (draft) => {
+                console.log(current(draft))
+                Object.assign(draft, patchArgs)
+              })
+            )
+          }
+        });
+      }
+    })
+
   })
 });
 
 
-export const { useFetchRegionListQuery, useFetchPokemonsByRegionQuery } = pokemonApi;
+export const { useFetchRegionListQuery, useFetchPokemonsByRegionQuery, useUpdateRegionsMutation } = pokemonApi;

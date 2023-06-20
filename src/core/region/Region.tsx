@@ -1,13 +1,14 @@
-import { Box, IconButton, LinearProgress, List, Stack, Typography } from "@mui/material";
+import { Box, IconButton, LinearProgress, List, Skeleton, Stack, Typography } from "@mui/material";
 import { PokemonTag, pokemonApi, useFetchPokemonsByRegionQuery } from "../store/pokemon.api";
 import { skipToken } from "@reduxjs/toolkit/dist/query/react";
 import { Pokemon } from "../store/pokemon.state";
 import PokemonCard from "../detail/Pokemon";
 import Refresh from "@mui/icons-material/Refresh";
-import { useAppDispatch } from "../../store/appHook";
+import { useAppDispatch, useAppSelector } from "../../store/appHook";
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
-import { Draggable } from '@hello-pangea/dnd';
+import { Draggable, Droppable, DroppableProvided, DroppableStateSnapshot } from '@hello-pangea/dnd';
 import { GREY } from "../../theme/palette";
+import { selectAllowCrossRegionDrag } from "../store/pokemon-config.selectors";
 
 export interface RegionProps {
   regionId: string;
@@ -16,6 +17,7 @@ export interface RegionProps {
 
 function Region({ regionId, index }: RegionProps) {
   const dispatch = useAppDispatch();
+  const isCrossRegionAllowed = useAppSelector(selectAllowCrossRegionDrag);
   const { data, pokemonData, isFetching, isLoading } = useFetchPokemonsByRegionQuery(regionId ?? skipToken, {
     selectFromResult: (data) => ({
       ...data,
@@ -27,8 +29,22 @@ function Region({ regionId, index }: RegionProps) {
     dispatch(pokemonApi.util.invalidateTags([{type: PokemonTag, id: regionId}]));
   };
 
+  if (isLoading) {
+    return (
+      <Stack width="100%" direction="column" justifyContent="start" alignItems="center" spacing={ 3 }>
+        <Skeleton animation="wave" width="100%" />
+        <Skeleton animation="wave" width="100%" />
+        <Skeleton animation="wave" width="100%" />
+      </Stack>
+    );
+  }
+
+  if (!data) {
+    return null;
+  }
+  
   return (
-    <Draggable draggableId={ regionId } index={ index }>
+    <Draggable draggableId={ `draggable-${regionId}` } index={ index }>
       {
         (provided, snapshot) => {
           
@@ -55,15 +71,34 @@ function Region({ regionId, index }: RegionProps) {
                 }
               </Box>
               <Box width="100%">
-                <List sx={ { width: '100%' } }>
+                {/* set type to same for all Region List if you want to enable cross-dragging between regions */}
+                <Droppable droppableId={ `droppable-${regionId}` } type={ isCrossRegionAllowed ? `pokemons` : `${regionId}-pokemons` }> 
                   {
-                    pokemonData.map((pokemon: Pokemon) => {
+                    (provided: DroppableProvided, snapshot: DroppableStateSnapshot) => {
                       return (
-                        <PokemonCard key={ pokemon.id } id={ pokemon.id } name={ pokemon.name } sprite={ pokemon.sprite } />
+                        <List 
+                          { ...provided.droppableProps } 
+                          ref={ provided.innerRef } 
+                          sx={ {width: '100%', 
+                            bgcolor: snapshot.isDraggingOver ? '#e6f2ff' : '#fff',
+                            border: snapshot.isDraggingOver ? '1px solid' : 'initial',
+                            borderColor: snapshot.isDraggingOver ? 'primary.main' : 'initial'
+                          } }
+                        >
+                          {
+                            pokemonData.map((pokemon: Pokemon, index: number) => {
+                              return (
+                                <PokemonCard key={ pokemon.id } id={ pokemon.id } name={ pokemon.name } sprite={ pokemon.sprite } index={ index } />
+                              );
+                            })
+                          }
+                          { provided.placeholder }
+                        </List>
                       );
-                    })
+                    }
                   }
-                </List>
+                </Droppable>
+                
               </Box>
             </Stack>
           );

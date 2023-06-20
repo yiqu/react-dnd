@@ -49,7 +49,7 @@ const Layout = () => {
           containerClassName="toast-container"
           containerStyle={ {} }
           toastOptions={ {
-            className: 'swdb-toast',
+            className: 'dnd-toast',
             duration: 5000,
             success: {
               duration: 8000,

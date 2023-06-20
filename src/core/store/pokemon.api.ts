@@ -2,8 +2,6 @@ import { createApi, fetchBaseQuery, TagDescription } from '@reduxjs/toolkit/quer
 import { BASE_FIREBASE_URL } from '../../shared/api/endpoints';
 import { Pokemon, Region } from './pokemon.state';
 import { PatchCollection } from '@reduxjs/toolkit/dist/query/core/buildThunks';
-import { current } from 'immer';
-
 
 export const basePath = "react-dnd";
 
@@ -82,7 +80,6 @@ export const pokemonApi = createApi({
         return [];
       },
       async onQueryStarted(patchArgs: string[], apiActions) {
-        console.log(patchArgs);
 
         const cacheList = pokemonApi.util.selectInvalidatedBy(apiActions.getState(), [{ type: RegionTag, id: 'ALL' }]);
         const patchResults: PatchCollection[] = [];
@@ -91,12 +88,32 @@ export const pokemonApi = createApi({
           if (cache.endpointName === "fetchRegionList") {
             const patchResult = apiActions.dispatch(
               pokemonApi.util.updateQueryData('fetchRegionList', cache.originalArgs, (draft) => {
-                console.log(current(draft))
-                Object.assign(draft, patchArgs)
+                Object.assign(draft, patchArgs);
               })
-            )
+            );
+            patchResults.push(patchResult);
           }
         });
+
+        try {
+          const updatedRegions = await apiActions.queryFulfilled;
+          // Update item in cache list with call response
+          cacheList.forEach((cache) => {
+            if (cache.endpointName === "fetchRegionList") {
+              apiActions.dispatch(
+                pokemonApi.util.updateQueryData('fetchRegionList', cache.originalArgs, (draft) => {
+                  Object.assign(draft, updatedRegions.data);
+                })
+              );
+            }
+            
+          });
+        } catch {
+          patchResults.forEach((pr) => {
+            pr.undo();
+          });
+          apiActions.dispatch(pokemonApi.util.invalidateTags([{type: RegionTag, id: 'ALL'}]));
+        }
       }
     })
 

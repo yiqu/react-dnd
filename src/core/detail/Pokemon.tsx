@@ -2,14 +2,17 @@ import { ListItem, ListItemAvatar, Avatar, ListItemText, Typography, styled, Sta
 import Edit from '@mui/icons-material/Edit';
 import Delete from '@mui/icons-material/Delete';
 import { useState } from "react";
+import { Draggable } from "@hello-pangea/dnd";
+import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 
 export interface PokemonProps {
   id: number;
   name: string;
   sprite: string;
+  index: number;
 }
 
-function PokemonCard({ id, name, sprite }: PokemonProps) {
+function PokemonCard({ id, name, sprite, index }: PokemonProps) {
 
   const [showActions, setShowActions] = useState<boolean>(false);
 
@@ -22,45 +25,65 @@ function PokemonCard({ id, name, sprite }: PokemonProps) {
   };
 
   return (
-    <StyledListItem onMouseOver={ handleMouseOver } onMouseLeave={ handleMouseLeave }>
-      <ListItemAvatar>
-        <Avatar alt={ name } src={ sprite } sx={ { width: 80, height: 80 } } />
-      </ListItemAvatar>
-      <ListItemText
-          primary={ <a href={ `https://pokemondb.net/pokedex/${name}` } target="_blank" rel="noreferrer">{ name }</a> }
-          secondary={
-            <Stack direction="column" justifyContent="start" alignItems="start" component="span">
-              <Typography
-                sx={ { display: 'inline' } }
-                component="span"
-              >
-                #{ id }
-              </Typography>
-              <Stack direction="row" justifyContent="start" alignItems="center" component="span" height="30px">
-                {
-                  showActions && <>
-                    <IconButton size="small">
-                      <Edit fontSize="small" />
-                    </IconButton>
-                    <IconButton size="small">
-                      <Delete fontSize="small" />
-                    </IconButton>
-                  </>
+    <Draggable draggableId={ name } index={ index }>
+      {
+        (provided, snapshot) => {
+          return (
+            <StyledListItem onMouseOver={ handleMouseOver } onMouseLeave={ handleMouseLeave } ref={ provided.innerRef }  { ...provided.draggableProps }
+              sx={ {
+                border: snapshot.isDragging ? '2px solid' : '1px solid',
+                borderColor: snapshot.isDragging ? 'primary.main' : import.meta.env.VITE_POKEMON_YELLOW_COLOR,
+                borderRadius:snapshot.isDragging ? '20px' : '20px',
+                paddingX:snapshot.isDragging ? '20px' : '0px'
+              } }
+            >
+              <ListItemAvatar >
+                <Stack direction="row" justifyContent="start" alignItems="center">
+                  <IconButton aria-label="drag" { ...provided.dragHandleProps }>
+                    <DragIndicatorIcon fontSize="small" />
+                  </IconButton>
+                  <Avatar alt={ name } src={ sprite } sx={ { width: 80, height: 80 } } />
+                </Stack>
+                
+              </ListItemAvatar>
+              <ListItemText
+                primary={ <a href={ `https://pokemondb.net/pokedex/${name}` } target="_blank" rel="noreferrer">{ name }</a> }
+                secondary={
+                  <Stack direction="column" justifyContent="start" alignItems="start" component="span">
+                    <Typography
+                      sx={ { display: 'inline' } }
+                      component="span"
+                    >
+                      #{ id }
+                    </Typography>
+                    <Stack direction="row" justifyContent="start" alignItems="center" component="span" height="30px">
+                      {
+                        showActions && <>
+                          <IconButton size="small">
+                            <Edit fontSize="small" />
+                          </IconButton>
+                          <IconButton size="small">
+                            <Delete fontSize="small" />
+                          </IconButton>
+                        </>
+                      }
+                    </Stack>
+                  </Stack>
                 }
-              </Stack>
-            </Stack>
-          }
-        />
-    </StyledListItem>
+              />
+            </StyledListItem>
+          );
+        }
+      }
+    </Draggable>
+    
   );
 }
 
 const StyledListItem = styled(ListItem)(() => ({
   alignItems: 'flex-start',
-  border: '1px solid',
-  borderColor: import.meta.env.VITE_POKEMON_YELLOW_COLOR,
-  borderRadius: '20px',
-  marginBottom: '2rem'
+  marginBottom: '2rem',
+  backgroundColor: '#fff'
 }));
 
 export default PokemonCard;

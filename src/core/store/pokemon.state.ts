@@ -15,6 +15,7 @@ export interface FireResult {
 
 export interface PokemonConfigState {
   recentSearches: string[];
+  allowCrossRegionDrag: boolean;
 }
 
 export interface RegionList {

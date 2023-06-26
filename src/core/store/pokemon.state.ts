@@ -21,3 +21,5 @@ export interface PokemonConfigState {
 export interface RegionList {
   regions: string[];
 }
+
+export const REGIONS = ["kanto", "johto", "hoenn"];

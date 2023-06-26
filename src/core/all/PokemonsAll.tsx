@@ -1,32 +1,36 @@
 import { Box, Button, Divider, FormControlLabel, FormGroup, LinearProgress, Skeleton, Stack, Switch } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
-import { pokemonApi, useFetchRegionListQuery, useUpdateRegionsMutation } from '../store/pokemon.api';
+import { pokemonApi, useFetchRegionListQuery, useUpdatePokemonsByRegionMutation, useUpdateRegionsMutation } from '../store/pokemon.api';
 import Region from '../region/Region';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { useAppDispatch, useAppSelector } from '../../store/appHook';
 import { DragDropContext, DragStart, DropResult, Droppable, DroppableProvided, DroppableStateSnapshot, ResponderProvided } from '@hello-pangea/dnd';
 import { selectAllowCrossRegionDrag } from '../store/pokemon-config.selectors';
 import { toggleCrossRegionDrag } from '../store/pokemon-config.reducer';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { skipToken } from '@reduxjs/toolkit/dist/query/react';
-import { Pokemon } from '../store/pokemon.state';
+import { Pokemon, REGIONS } from '../store/pokemon.state';
+import useScreenSize from '../../shared/hooks/useScreensize';
 
 
 function FilmsAll() {
   const dispatch = useAppDispatch();
-  const { data, isFetching, isLoading, refetch } = useFetchRegionListQuery();
-  const [updateRegions, updateRegionsResult] = useUpdateRegionsMutation();
-  const isCrossRegionAllowed = useAppSelector(selectAllowCrossRegionDrag);
+  const { isAboveXl } = useScreenSize();
   const [currentDragActionRegion, setCurrentDragActionRegion] = useState<string | undefined>(undefined);
+  const { data, isFetching, isLoading, refetch } = useFetchRegionListQuery();
+  const isCrossRegionAllowed = useAppSelector(selectAllowCrossRegionDrag);
+  const pokemonsByRegionSelector = useMemo(() => pokemonApi.endpoints.fetchPokemonsByRegion.select(currentDragActionRegion ?? skipToken),[currentDragActionRegion]);
+  const pokemonsByRegion = useAppSelector(pokemonsByRegionSelector);
+  const [updateRegions, updateRegionsResult] = useUpdateRegionsMutation();
+  const [updatePokemonsByRegion, updatePokemonsByRegionResult] = useUpdatePokemonsByRegionMutation();
 
+  const apiLoading = isFetching || updatePokemonsByRegionResult.isLoading || updateRegionsResult.isLoading;
+  
   const handleRefresh = () => {
     //dispatch(pokemonApi.util.invalidateTags([{type: PokemonTag}]));
     dispatch(pokemonApi.util.invalidateTags([{type: "Region", id: 'ALL'}]));
     //refetch();
   };
-  
-  const pokemonsByRegionSelector = pokemonApi.endpoints.fetchPokemonsByRegion.select(currentDragActionRegion ?? skipToken);
-  const pokemonsByRegion = useAppSelector(pokemonsByRegionSelector);
 
   const handleOnDragStart = (start: DragStart, provided: ResponderProvided) => {
     const regionId = start.type.split("-")[0];
@@ -49,8 +53,13 @@ function FilmsAll() {
     else if (result.type.includes('-pokemons')) {
       const dataCopy: Pokemon[] = [...pokemonsByRegion.data?.pokemons ?? []];
       const newOrdered = reorder<Pokemon>(dataCopy, result.source.index, result.destination.index);
-      console.log(dataCopy);
-      console.log(newOrdered);
+      const regionId = result.type.split("-")[0];
+      if (REGIONS.includes(regionId)) {
+        updatePokemonsByRegion({
+          id: regionId,
+          pokemons: newOrdered
+        });
+      }
     }
     
   };
@@ -61,10 +70,11 @@ function FilmsAll() {
   
   if (isLoading) {
     return (
-      <Box width="100%">
+      <Stack width="100%" direction="column" spacing={ 3 }>
+        <Skeleton animation="wave" sx={ {mt: 3} } />
         <Skeleton animation="wave" />
         <Skeleton animation="wave" />
-      </Box>
+      </Stack>
     );
   }
 
@@ -85,7 +95,8 @@ function FilmsAll() {
       <Divider flexItem variant='fullWidth' sx={ {mb: 1} } />
       <Box width="100%" height="5px">
         {
-          isFetching && <LinearProgress />
+          apiLoading && 
+            <LinearProgress color={ (updatePokemonsByRegionResult.isLoading || updateRegionsResult.isLoading) ? 'warning' : 'success' } />
         }
       </Box>
       <DragDropContext onDragEnd={ handleOnDragEnd } onDragStart={ handleOnDragStart }>

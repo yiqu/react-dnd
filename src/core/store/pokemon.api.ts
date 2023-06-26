@@ -68,6 +68,7 @@ export const pokemonApi = createApi({
       }
     }),
 
+    // Optimistic AND Pessimistic update. Both
     updateRegions: builder.mutation<string[], string[]>({
       query: (args: string[]) => {
         return {
@@ -115,10 +116,49 @@ export const pokemonApi = createApi({
           apiActions.dispatch(pokemonApi.util.invalidateTags([{type: RegionTag, id: 'ALL'}]));
         }
       }
+    }),
+
+    // Optimistic update
+    updatePokemonsByRegion: builder.mutation<Region, Region>({
+      query: (args: Region) => {
+        return {
+          url: `${args.id}.json`,
+          method: 'PUT',
+          body: args
+        };
+      },
+      invalidatesTags: (result, error, args, meta) => {
+        return [];
+      },
+      async onQueryStarted(patchArgs: Region, apiActions) {
+        const cacheList = pokemonApi.util.selectInvalidatedBy(apiActions.getState(), [{ type: PokemonTag, id: patchArgs.id }]);
+        const patchResults: PatchCollection[] = [];
+
+        cacheList.forEach((cache) => {
+          if (cache.endpointName === "fetchPokemonsByRegion") {
+            const patchResult = apiActions.dispatch(
+              pokemonApi.util.updateQueryData('fetchPokemonsByRegion', cache.originalArgs, (draft) => {
+                Object.assign(draft, patchArgs);
+              })
+            );
+            patchResults.push(patchResult);
+          }
+        });
+
+        try {
+          const updatePokemonsByRegion = await apiActions.queryFulfilled;
+        } catch {
+          patchResults.forEach((pr) => {
+            pr.undo();
+          });
+          apiActions.dispatch(pokemonApi.util.invalidateTags([{ type: PokemonTag, id: patchArgs.id }]));
+        }
+      }
     })
 
   })
 });
 
 
-export const { useFetchRegionListQuery, useFetchPokemonsByRegionQuery, useUpdateRegionsMutation } = pokemonApi;
+export const { useFetchRegionListQuery, useFetchPokemonsByRegionQuery, useUpdateRegionsMutation,
+  useUpdatePokemonsByRegionMutation } = pokemonApi;

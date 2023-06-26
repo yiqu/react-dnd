@@ -1,8 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import { PokemonConfigState } from './pokemon.state';
+import { PokemonConfigState, Region } from './pokemon.state';
 import { pokemonApi } from './pokemon.api';
 import toast from 'react-hot-toast';
+import { startCase } from 'lodash';
 
 
 const initialState: PokemonConfigState = {
@@ -27,6 +28,12 @@ export const pokemonConfigSlice = createSlice({
     });
     builder.addMatcher(pokemonApi.endpoints.updateRegions.matchRejected, (state, action) => {
       toast.error("Updating Regions' order failed!");
+    });
+    builder.addMatcher(pokemonApi.endpoints.updatePokemonsByRegion.matchFulfilled, (state, action: PayloadAction<Region>) => {
+      toast.success(`${startCase(action.payload.id)} Pokemons re-ordered successfully!`);
+    });
+    builder.addMatcher(pokemonApi.endpoints.updatePokemonsByRegion.matchRejected, (state, action) => {
+      toast.error(`Updating Pokemons of ${startCase(action.meta.arg.originalArgs.id)}'s order failed!`);
     });
   }
 });

@@ -64,7 +64,12 @@ export default function TopNav() {
                       to={ `/${page.toLowerCase()}` }
                       key={ page }
                       onClick={ handlePageClick }
-                      sx={ { color: GREY[200] } }
+                      sx={ { color: GREY[200],
+                        '&:hover': {
+                          color: GREY[200],
+                          textDecoration: 'underline'
+                       }
+                      } }
                     >
                       {page}
                     </Button>

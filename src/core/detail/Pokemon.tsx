@@ -4,6 +4,7 @@ import Delete from '@mui/icons-material/Delete';
 import { useState } from "react";
 import { Draggable } from "@hello-pangea/dnd";
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
+import useScreenSize from "../../shared/hooks/useScreensize";
 
 export interface PokemonProps {
   id: number;
@@ -14,6 +15,7 @@ export interface PokemonProps {
 
 function PokemonCard({ id, name, sprite, index }: PokemonProps) {
 
+  const { isAboveXl } = useScreenSize();
   const [showActions, setShowActions] = useState<boolean>(false);
 
   const handleMouseOver = () => {
@@ -34,15 +36,15 @@ function PokemonCard({ id, name, sprite, index }: PokemonProps) {
                 border: snapshot.isDragging ? '2px solid' : '1px solid',
                 borderColor: snapshot.isDragging ? 'primary.main' : import.meta.env.VITE_POKEMON_YELLOW_COLOR,
                 borderRadius:snapshot.isDragging ? '20px' : '20px',
-                paddingX:snapshot.isDragging ? '20px' : '0px'
+                paddingX:snapshot.isDragging ? '20px' : '5px'
               } }
             >
               <ListItemAvatar >
-                <Stack direction="row" justifyContent="start" alignItems="center">
+                <Stack direction={ isAboveXl ? "row" : "column-reverse" } justifyContent="start" alignItems="center">
                   <IconButton aria-label="drag" { ...provided.dragHandleProps }>
                     <DragIndicatorIcon fontSize="small" />
                   </IconButton>
-                  <Avatar alt={ name } src={ sprite } sx={ { width: 80, height: 80 } } />
+                  <Avatar alt={ name } src={ sprite } sx={ { width: isAboveXl ? 80 : 40, height: isAboveXl ? 80 : 40 } } />
                 </Stack>
                 
               </ListItemAvatar>

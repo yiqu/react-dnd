@@ -54,7 +54,7 @@ function Region({ regionId, index }: RegionProps) {
               border={ snapshot.isDragging ? '2px solid' : 'none' } 
               borderColor={ snapshot.isDragging ? 'primary.main' : GREY[100] }
               borderRadius={ snapshot.isDragging ? '15px' : '0px' }
-              paddingX={ snapshot.isDragging ? '20px' : '0px' }
+              // paddingX={ snapshot.isDragging ? '20px' : '0px' }
             >
               <Stack direction="row" justifyContent="center" alignItems="center" width="100%">
                 <IconButton aria-label="drag" { ...provided.dragHandleProps }>

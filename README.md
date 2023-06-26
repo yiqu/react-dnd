@@ -1,10 +1,6 @@
-# Movie Rank
+# Pokemon Drag N Drop
 
-
-[![CircleCI](https://circleci.com/gh/yiqu/react-dnd/tree/master.svg?style=svg)](https://circleci.com/gh/yiqu/react-dnd/tree/master)
-
+Drag and Drop using react-beautiful-dnd and RTK Query.
 
 ## Preview
-[Firebase](https://react-dnd.web.app/)
-
-[Github Pages](https://yiqu.github.io/react-dnd/)
+[Hosted on Vercel](https://react-dnd-yiqu.vercel.app)

@@ -72,7 +72,7 @@ function Region({ regionId, index }: RegionProps) {
               </Box>
               <Box width="100%">
                 {/* set type to same for all Region List if you want to enable cross-dragging between regions */}
-                <Droppable droppableId={ `droppable-${regionId}` } type={ isCrossRegionAllowed ? `pokemons` : `${regionId}-pokemons` }> 
+                <Droppable droppableId={ `droppable-${regionId}` } type={ isCrossRegionAllowed ? `pokemons-cross-regions` : `${regionId}-pokemons` }> 
                   {
                     (provided: DroppableProvided, snapshot: DroppableStateSnapshot) => {
                       return (

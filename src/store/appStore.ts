@@ -3,6 +3,8 @@ import { setupListeners } from '@reduxjs/toolkit/query/react';
 import authSliceReducer from './auth/auth.reducer';
 import pokemonConfigSliceReducer, { pokemonConfigSlice } from '../core/store/pokemon-config.reducer';
 import { pokemonApi } from '../core/store/pokemon.api';
+import { persistStore } from 'redux-persist';
+import {FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER} from 'redux-persist';
 
 export const appStore = configureStore({
   reducer: {
@@ -14,12 +16,18 @@ export const appStore = configureStore({
   // Adding the api middleware enables caching, invalidation, polling,
   // and other useful features of `rtk-query`.
   middleware: (getDefaultMiddleware) => {
-    return getDefaultMiddleware().concat(pokemonApi.middleware);
+    return getDefaultMiddleware({
+      immutableCheck: true,
+      serializableCheck: {
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER] // needed for Redux-persist
+      },
+      thunk: true,
+    }).concat(pokemonApi.middleware);
   },
   
   devTools: {
     trace: true,
-    name: 'Pokemon Rank',
+    name: 'Pokemon Drag And Drop',
     actionsDenylist: ['__rtkq/focused', '__rtkq/unfocused']
   },
 });
@@ -32,3 +40,5 @@ setupListeners(appStore.dispatch);
 export type RootState = ReturnType<typeof appStore.getState>;
 
 export type AppDispatch = typeof appStore.dispatch;
+
+export const persistor = persistStore(appStore);

@@ -46,6 +46,7 @@
     "react-router-dom": "^6.4.2",
     "react-tooltip": "^5.9.1",
     "react-use": "^17.4.0",
+    "redux-persist": "^6.0.0",
     "rxjs": "^7.8.0",
     "sonner": "^0.1.5",
     "urlcat": "^3.0.0",

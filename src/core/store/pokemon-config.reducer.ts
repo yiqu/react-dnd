@@ -4,7 +4,9 @@ import { PokemonConfigState, Region } from './pokemon.state';
 import { pokemonApi } from './pokemon.api';
 import toast from 'react-hot-toast';
 import { startCase } from 'lodash';
-
+import storage from 'redux-persist/lib/storage';
+import autoMergeLevel2 from 'redux-persist/es/stateReconciler/autoMergeLevel2';
+import { persistReducer } from 'redux-persist';
 
 const initialState: PokemonConfigState = {
   recentSearches: [],
@@ -40,4 +42,14 @@ export const pokemonConfigSlice = createSlice({
 
 export const { addRecentSearch, toggleCrossRegionDrag } = pokemonConfigSlice.actions;
 
-export default pokemonConfigSlice.reducer;
+// Persisted reducer config
+const persistConfig = {
+  key: "react-dnd-pokemon-config", // key name in the localStorage 'key'
+  storage,
+  stateReconciler: autoMergeLevel2,
+  whitelist: ['allowCrossRegionDrag']
+};
+
+const persistedPokemonConfigReducer = persistReducer<ReturnType<typeof pokemonConfigSlice.reducer>>(persistConfig, pokemonConfigSlice.reducer);
+
+export default persistedPokemonConfigReducer;

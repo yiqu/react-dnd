@@ -11,7 +11,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { skipToken } from '@reduxjs/toolkit/dist/query/react';
 import { Pokemon, REGIONS } from '../store/pokemon.state';
 import useScreenSize from '../../shared/hooks/useScreensize';
-
+import {produce} from "immer";
 
 function FilmsAll() {
   const dispatch = useAppDispatch();
@@ -72,12 +72,13 @@ function FilmsAll() {
     if (result.destination.droppableId === result.source.droppableId && result.destination.index === result.source.index) {
       return;
     }
-
+    // Dragging Regions
     if (result.type === 'regions') {
       const dataCopy = [...data ?? []];
       const newOrdered = reorder<string>(dataCopy, result.source.index, result.destination.index);
       updateRegions(newOrdered);
     }
+    // Dragging Pokemons (cross region disabled)
     else if (result.type.includes('-pokemons')) {
       const dataCopy: Pokemon[] = [...pokemonsByRegion.data?.pokemons ?? []];
       const newOrdered = reorder<Pokemon>(dataCopy, result.source.index, result.destination.index);
@@ -88,19 +89,41 @@ function FilmsAll() {
           pokemons: newOrdered
         });
       }
-    } else if (result.type === 'pokemons-cross-regions') {
+    } 
+    // Dragging Pokemons (cross region enabled)
+    else if (result.type === 'pokemons-cross-regions') {
+      // Dragging pokemon in the same region
+      if (result.source.droppableId === result.destination.droppableId && pokemonsByRegion.data) {
+        const dataCopy: Pokemon[] = [...pokemonsByRegion.data.pokemons ?? []];
+        const newOrdered = reorder<Pokemon>(dataCopy, result.source.index, result.destination.index);
+        const regionId = pokemonsByRegion.data.id;
+        if (REGIONS.includes(regionId)) {
+          updatePokemonsByRegion({
+            id: regionId,
+            pokemons: newOrdered
+          });
+        }
+      } 
+      // Dragging cross region
+      else if (result.source.droppableId !== result.destination.droppableId && result.destination && pokemonsByRegion.data && pokemonsByDestRegion.data) {
+        
+        // Remove dragged from source region
+        const nextSourcePokemons = produce(pokemonsByRegion.data, draft => {
+          draft.pokemons.splice(result.source.index, 1);
+        });
+        if (REGIONS.includes(nextSourcePokemons.id)) {
+          updatePokemonsByRegion(nextSourcePokemons);
+        }
 
-      console.log(result);
-      console.log(pokemonsByRegion.data);
-      console.log(pokemonsByDestRegion.data);
-
-      if (result.source.droppableId === result.destination.droppableId) {
-        console.log("same region drop while cross region enabled");
-      } else {
-        console.log("cross region");
+        // Add dragged to dest region
+        const nextDestPokemons = produce(pokemonsByDestRegion.data, draft => {
+          draft.pokemons.splice(result.destination!.index, 0, pokemonsByRegion.data!.pokemons[result.source.index]);
+        });
+        if (REGIONS.includes(nextDestPokemons.id)) {
+          updatePokemonsByRegion(nextDestPokemons);
+        }
       }
     }
-    
   };
 
   const handleCrossDragToggle = (event: React.ChangeEvent<HTMLInputElement>) => {

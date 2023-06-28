@@ -13,6 +13,7 @@ import ThemeContext from "../../src/theme/ThemeContext";
 import { useLocalStorage } from 'react-use';
 import { APP_TOOLTIP_ID, LS_APP_THEME } from "../../src/shared/utils/constants";
 import { GREY } from "../theme/palette";
+import Image from 'mui-image';
 
 export interface TopNavProps {
   open: boolean;
@@ -53,8 +54,12 @@ export default function TopNav() {
   return (
     <React.Fragment>
       <AppBar position="static" elevation={ 0 }>
-        <Container maxWidth="xl">
+        <Container maxWidth="xl" disableGutters>
           <Toolbar>
+            <Stack direction="row" justifyContent="center" alignItems="center" mr={ 2 }
+              component={ Link } to={ "/" }>
+              <Image src="/snorlax.png" height={ '30px' } alt="logo" showLoading />
+            </Stack>
             <Stack direction="row" justifyContent="space-between" alignItems="center" width="100%">
               <Stack direction="row" justifyContent="start" alignItems="center">
                 <Box sx={ { flexGrow: 1, display: { xs: 'none', md: 'flex' } } }>

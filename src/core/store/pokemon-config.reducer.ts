@@ -26,12 +26,14 @@ export const pokemonConfigSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addMatcher(pokemonApi.endpoints.updateRegions.matchFulfilled, (state, action: PayloadAction<string[]>) => {
+      toast.dismiss();
       toast.success("Updated Regions' order successfully!");
     });
     builder.addMatcher(pokemonApi.endpoints.updateRegions.matchRejected, (state, action) => {
       toast.error("Updating Regions' order failed!");
     });
     builder.addMatcher(pokemonApi.endpoints.updatePokemonsByRegion.matchFulfilled, (state, action: PayloadAction<Region>) => {
+      toast.dismiss();
       toast.success(`${startCase(action.payload.id)} Pokemons re-ordered successfully!`);
     });
     builder.addMatcher(pokemonApi.endpoints.updatePokemonsByRegion.matchRejected, (state, action) => {

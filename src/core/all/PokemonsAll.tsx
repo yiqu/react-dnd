@@ -12,6 +12,7 @@ import { skipToken } from '@reduxjs/toolkit/dist/query/react';
 import { Pokemon, REGIONS } from '../store/pokemon.state';
 import useScreenSize from '../../shared/hooks/useScreensize';
 import {produce} from "immer";
+import AddPokemon from '../actions/ActionBarAddPokemon';
 
 function FilmsAll() {
   const dispatch = useAppDispatch();
@@ -146,10 +147,13 @@ function FilmsAll() {
 
   return (
     <Box width="100%">
-      <Stack direction="row" justifyContent="space-between" alignItems="start" width="100%">
-        <Button startIcon={ <RefreshIcon /> } variant='text' onClick={ handleRefresh }>
-          Refresh
-        </Button>
+      <Stack direction="row" justifyContent="space-between" alignItems="center" width="100%">
+        <Stack direction="row" justifyContent="start" alignItems="center">
+          <Button startIcon={ <RefreshIcon /> } variant='text' onClick={ handleRefresh }>
+            Refresh
+          </Button>
+          <AddPokemon />
+        </Stack>
         <FormGroup>
           <FormControlLabel control={ <Switch checked={ isCrossRegionAllowed } onChange={ handleCrossDragToggle } /> } label="Allow Cross Region" />
         </FormGroup>

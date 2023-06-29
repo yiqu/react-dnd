@@ -4,6 +4,7 @@ import './index.css';
 import 'animate.css';
 import App from './App';
 import 'react-tooltip/dist/react-tooltip.css';
+import CssBaseline from '@mui/material/CssBaseline';
 
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
@@ -29,6 +30,7 @@ root.render(
     <Provider store={ appStore }>
       <PersistGate loading={ null } persistor={ persistor }>
         <ThemeContextProvider>
+          <CssBaseline />
           <App />
         </ThemeContextProvider>
       </PersistGate>

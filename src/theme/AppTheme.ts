@@ -1,6 +1,6 @@
 import { PaletteMode, ThemeOptions } from '@mui/material';
 import { MyComponents } from './components';
-import { MyPaletteOptions } from './palette';
+import { MyDarkPaletteOptions, MyPaletteOptions } from './palette';
 import { MyTypography } from './typography';
 
 export const getMyTheme = (mode: PaletteMode): ThemeOptions => {
@@ -16,6 +16,7 @@ export const getMyTheme = (mode: PaletteMode): ThemeOptions => {
         : 
         {
           // palette values for dark mode
+          ...MyDarkPaletteOptions
         }
       )
     },

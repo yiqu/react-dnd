@@ -1,6 +1,21 @@
 import { PaletteOptions } from "@mui/material/styles";
 
 export const MyPaletteOptions: PaletteOptions  = {
+  background: {
+    default: '#0d47a1'
+  },
+  text: {
+    primary: '#fff'
+  }
+};
+
+export const MyDarkPaletteOptions: PaletteOptions  = {
+  background: {
+    default: '#000'
+  },
+  text: {
+    primary: '#fff'
+  }
 };
 
 export const GREY = {

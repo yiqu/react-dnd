@@ -9,6 +9,11 @@ export interface Pokemon {
   sprite: string;
 }
 
+export interface NewPokemon {
+  id: string;
+  name: string;
+}
+
 export interface FireResult {
   [fireid: string]: Region;
 }
@@ -23,3 +28,8 @@ export interface RegionList {
 }
 
 export const REGIONS = ["kanto", "johto", "hoenn"];
+
+export const DEFAULT_NEW_POKEMON: NewPokemon = {
+  name: 'Pikachu',
+  id: '25',
+};

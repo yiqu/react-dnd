@@ -9,8 +9,9 @@ export const flexCenter = {
 export const ellipsis = {
   whiteSpace: 'nowrap',
   overflow: 'hidden',
-  textOverflow: 'ellipsis'
-};
+  textOverflow: 'ellipsis',
+  width: '100%'
+} as any;
 
 export const isDraggingStyles: CSSProperties = {
   border: '2px solid',

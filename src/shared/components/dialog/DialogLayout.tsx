@@ -1,4 +1,5 @@
-import { Dialog, DialogProps, DialogTitle } from "@mui/material";
+import { Dialog, DialogProps, DialogTitle, IconButton, Stack } from "@mui/material";
+import Close from '@mui/icons-material/Close';
 
 export interface DialogLayoutProps {
   open: boolean;
@@ -22,7 +23,13 @@ function DialogLayout({ open, title, maxWidth="lg", onClose, children }: DialogL
       open={ open }
       onClose={ handleClose }
     >
-      <DialogTitle sx={ {backgroundColor: "background.default", color: 'text.primary'} }> { title} </DialogTitle>
+      <DialogTitle sx={ {backgroundColor: "background.default", color: 'text.primary'} }>
+        <Stack direction="row" justifyContent="space-between" alignItems="center">
+          { title}
+          <IconButton aria-label="close" onClick={ handleClose }> <Close /> </IconButton> 
+        </Stack>
+        
+      </DialogTitle>
        
       { children }
     </Dialog>

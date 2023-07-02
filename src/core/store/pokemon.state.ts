@@ -1,3 +1,5 @@
+import * as yup from "yup";
+
 export interface Region {
   id: string;
   pokemons: Pokemon[];
@@ -12,6 +14,14 @@ export interface Pokemon {
 export interface NewPokemon {
   id: string;
   name: string;
+  region: string;
+}
+
+export interface UpdatePokemon {
+  index: number;
+  id: string;
+  name: string;
+  region: string;
 }
 
 export interface FireResult {
@@ -30,6 +40,13 @@ export interface RegionList {
 export const REGIONS = ["kanto", "johto", "hoenn"];
 
 export const DEFAULT_NEW_POKEMON: NewPokemon = {
-  name: 'Pikachu',
-  id: '25',
+  name: '',
+  id: '',
+  region: ''
 };
+
+export const PokemonSchema = yup.object({
+  id: yup.number().required('Pokemon ID is required').min(1),
+  name: yup.string().trim().required('Name is required').min(2, 'Name has to be at least 2 characters'),
+  region: yup.string().oneOf(REGIONS).required('Region is required')
+});

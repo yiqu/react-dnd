@@ -20,11 +20,6 @@ const routeList: Router = createBrowserRouter([
             index: true,
             element: <PokemonsAllLayout />
           },
-          // {
-          //   path: ':filmId',
-          //   element: <CoreMovieLazy />,
-          //   loader: movieDetailLoader
-          // }
         ]
       },
       {

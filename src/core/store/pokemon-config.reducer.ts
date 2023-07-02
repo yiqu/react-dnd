@@ -25,19 +25,28 @@ export const pokemonConfigSlice = createSlice({
     }
   },
   extraReducers: (builder) => {
-    builder.addMatcher(pokemonApi.endpoints.updateRegions.matchFulfilled, (state, action: PayloadAction<string[]>) => {
+    builder.addMatcher(pokemonApi.endpoints.updateRegionsList.matchFulfilled, (state, action: PayloadAction<string[]>) => {
       toast.dismiss();
       toast.success("Updated Regions' order successfully!");
     });
-    builder.addMatcher(pokemonApi.endpoints.updateRegions.matchRejected, (state, action) => {
+    builder.addMatcher(pokemonApi.endpoints.updateRegionsList.matchRejected, (state, action) => {
       toast.error("Updating Regions' order failed!");
     });
-    builder.addMatcher(pokemonApi.endpoints.updatePokemonsByRegion.matchFulfilled, (state, action: PayloadAction<Region>) => {
+    
+    builder.addMatcher(pokemonApi.endpoints.updatePokemonOrderByRegion.matchFulfilled, (state, action: PayloadAction<Region>) => {
       toast.dismiss();
       toast.success(`${startCase(action.payload.id)} Pokemons re-ordered successfully!`);
     });
-    builder.addMatcher(pokemonApi.endpoints.updatePokemonsByRegion.matchRejected, (state, action) => {
+    builder.addMatcher(pokemonApi.endpoints.updatePokemonOrderByRegion.matchRejected, (state, action) => {
       toast.error(`Updating Pokemons of ${startCase(action.meta.arg.originalArgs.id)}'s order failed!`);
+    });
+
+    builder.addMatcher(pokemonApi.endpoints.addPokemon.matchPending, (state, action) => {
+      toast.loading(`Adding ${action.meta.arg.originalArgs.name} to ${startCase(action.meta.arg.originalArgs.region)}...`);
+    });
+    builder.addMatcher(pokemonApi.endpoints.addPokemon.matchFulfilled, (state, action) => {
+      toast.dismiss();
+      toast.success(`Added ${action.meta.arg.originalArgs.name} to ${startCase(action.meta.arg.originalArgs.region)} successfully!`);
     });
   }
 });

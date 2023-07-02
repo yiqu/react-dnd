@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery, TagDescription } from '@reduxjs/toolkit/query/react';
-import { BASE_FIREBASE_URL } from '../../shared/api/endpoints';
-import { Pokemon, Region } from './pokemon.state';
+import { BASE_FIREBASE_URL, BASE_POKEMON_SPRITE_URL } from '../../shared/api/endpoints';
+import { Pokemon, Region, UpdatePokemon } from './pokemon.state';
 import { PatchCollection } from '@reduxjs/toolkit/dist/query/core/buildThunks';
 
 export const basePath = "react-dnd";
@@ -69,7 +69,7 @@ export const pokemonApi = createApi({
     }),
 
     // Optimistic AND Pessimistic update. Both
-    updateRegions: builder.mutation<string[], string[]>({
+    updateRegionsList: builder.mutation<string[], string[]>({
       query: (args: string[]) => {
         return {
           url: `regions.json`,
@@ -119,7 +119,7 @@ export const pokemonApi = createApi({
     }),
 
     // Optimistic update
-    updatePokemonsByRegion: builder.mutation<Region, Region>({
+    updatePokemonOrderByRegion: builder.mutation<Region, Region>({
       query: (args: Region) => {
         return {
           url: `${args.id}.json`,
@@ -146,7 +146,63 @@ export const pokemonApi = createApi({
         });
 
         try {
-          const updatePokemonsByRegion = await apiActions.queryFulfilled;
+          await apiActions.queryFulfilled;
+        } catch {
+          patchResults.forEach((pr) => {
+            pr.undo();
+          });
+          apiActions.dispatch(pokemonApi.util.invalidateTags([{ type: PokemonTag, id: patchArgs.id }]));
+        }
+      }
+    }),
+
+    updatePokemon: builder.mutation<Pokemon, UpdatePokemon>({
+      query: (args: UpdatePokemon) => {
+        return {
+          url: `${args.region}/pokemons/${args.index}.json`,
+          method: 'PUT',
+          body: args
+        };
+      }
+    }),
+
+    addPokemon: builder.mutation<Pokemon, UpdatePokemon>({
+      query: (args: UpdatePokemon) => {
+        const pokemonToAdd: Pokemon = {
+          id: +args.id,
+          name: args.name,
+          sprite: `${BASE_POKEMON_SPRITE_URL}${args.id}.png`
+        };
+        return {
+          url: `${args.region}/pokemons/${args.index}.json`,
+          method: 'PUT',
+          body: pokemonToAdd
+        };
+      },
+      invalidatesTags: (result, error, args, meta) => {
+        return [];
+      },
+      async onQueryStarted(patchArgs: UpdatePokemon, apiActions) {
+        const cacheList = pokemonApi.util.selectInvalidatedBy(apiActions.getState(), [{ type: PokemonTag, id: patchArgs.region }]);
+        const patchResults: PatchCollection[] = [];
+
+        cacheList.forEach((cache) => {
+          if (cache.endpointName === "fetchPokemonsByRegion") {
+            const patchResult = apiActions.dispatch(
+              pokemonApi.util.updateQueryData('fetchPokemonsByRegion', cache.originalArgs, (draft) => {
+                draft.pokemons.push({
+                  id: +patchArgs.id,
+                  name: patchArgs.name,
+                  sprite: `${BASE_POKEMON_SPRITE_URL}${patchArgs.id}.png`
+                });
+              })
+            );
+            patchResults.push(patchResult);
+          }
+        });
+
+        try {
+          await apiActions.queryFulfilled;
         } catch {
           patchResults.forEach((pr) => {
             pr.undo();
@@ -160,5 +216,5 @@ export const pokemonApi = createApi({
 });
 
 
-export const { useFetchRegionListQuery, useFetchPokemonsByRegionQuery, useUpdateRegionsMutation,
-  useUpdatePokemonsByRegionMutation } = pokemonApi;
+export const { useFetchRegionListQuery, useFetchPokemonsByRegionQuery, useUpdateRegionsListMutation,
+  useUpdatePokemonOrderByRegionMutation, useAddPokemonMutation } = pokemonApi;

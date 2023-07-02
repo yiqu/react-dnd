@@ -25,6 +25,7 @@
     "@mui/lab": "^5.0.0-alpha.121",
     "@mui/material": "^5.10.13",
     "@reduxjs/toolkit": "^1.9.2",
+    "@hookform/resolvers": "~3.0.1",
     "animate.css": "^4.1.1",
     "axios": "^0.27.2",
     "axios-hooks": "^4.0.0",

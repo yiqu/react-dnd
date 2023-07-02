@@ -1,6 +1,6 @@
 import { Box, Button, Divider, FormControlLabel, FormGroup, LinearProgress, Skeleton, Stack, Switch } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
-import { pokemonApi, useFetchRegionListQuery, useUpdatePokemonsByRegionMutation, useUpdateRegionsMutation } from '../store/pokemon.api';
+import { pokemonApi, useFetchRegionListQuery, useUpdatePokemonOrderByRegionMutation, useUpdateRegionsListMutation } from '../store/pokemon.api';
 import Region from '../region/Region';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { useAppDispatch, useAppSelector } from '../../store/appHook';
@@ -12,9 +12,9 @@ import { skipToken } from '@reduxjs/toolkit/dist/query/react';
 import { Pokemon, REGIONS } from '../store/pokemon.state';
 import useScreenSize from '../../shared/hooks/useScreensize';
 import {produce} from "immer";
-import AddPokemon from '../actions/ActionBarAddPokemon';
+import AddPokemon from '../actions/AddEditPokemon';
 
-function FilmsAll() {
+function PokemonsAll() {
   const dispatch = useAppDispatch();
   const { isAboveXl } = useScreenSize();
 
@@ -22,8 +22,8 @@ function FilmsAll() {
   const { data, isFetching, isLoading, refetch } = useFetchRegionListQuery();
 
   // Mutation hooks
-  const [updateRegions, updateRegionsResult] = useUpdateRegionsMutation();
-  const [updatePokemonsByRegion, updatePokemonsByRegionResult] = useUpdatePokemonsByRegionMutation();
+  const [updateRegions, updateRegionsResult] = useUpdateRegionsListMutation();
+  const [updatePokemonOrderByRegion, updatePokemonOrderByRegionResult] = useUpdatePokemonOrderByRegionMutation();
 
   // Cross region mode
   const isCrossRegionAllowed = useAppSelector(selectAllowCrossRegionDrag);
@@ -37,7 +37,7 @@ function FilmsAll() {
   const pokemonsByRegion = useAppSelector(pokemonsByRegionSelector);
   const pokemonsByDestRegion = useAppSelector(pokemonsByDestRegioSelector);
 
-  const apiLoading = isFetching || updatePokemonsByRegionResult.isLoading || updateRegionsResult.isLoading;
+  const apiLoading = isFetching || updatePokemonOrderByRegionResult.isLoading || updateRegionsResult.isLoading;
   
   const handleRefresh = () => {
     //dispatch(pokemonApi.util.invalidateTags([{type: PokemonTag}]));
@@ -85,7 +85,7 @@ function FilmsAll() {
       const newOrdered = reorder<Pokemon>(dataCopy, result.source.index, result.destination.index);
       const regionId = result.type.split("-")[0];
       if (REGIONS.includes(regionId)) {
-        updatePokemonsByRegion({
+        updatePokemonOrderByRegion({
           id: regionId,
           pokemons: newOrdered
         });
@@ -99,7 +99,7 @@ function FilmsAll() {
         const newOrdered = reorder<Pokemon>(dataCopy, result.source.index, result.destination.index);
         const regionId = pokemonsByRegion.data.id;
         if (REGIONS.includes(regionId)) {
-          updatePokemonsByRegion({
+          updatePokemonOrderByRegion({
             id: regionId,
             pokemons: newOrdered
           });
@@ -113,7 +113,7 @@ function FilmsAll() {
           draft.pokemons.splice(result.source.index, 1);
         });
         if (REGIONS.includes(nextSourcePokemons.id)) {
-          updatePokemonsByRegion(nextSourcePokemons);
+          updatePokemonOrderByRegion(nextSourcePokemons);
         }
 
         // Add dragged to dest region
@@ -121,7 +121,7 @@ function FilmsAll() {
           draft.pokemons.splice(result.destination!.index, 0, pokemonsByRegion.data!.pokemons[result.source.index]);
         });
         if (REGIONS.includes(nextDestPokemons.id)) {
-          updatePokemonsByRegion(nextDestPokemons);
+          updatePokemonOrderByRegion(nextDestPokemons);
         }
       }
     }
@@ -162,7 +162,7 @@ function FilmsAll() {
       <Box width="100%" height="5px">
         {
           apiLoading && 
-            <LinearProgress color={ (updatePokemonsByRegionResult.isLoading || updateRegionsResult.isLoading) ? 'warning' : 'success' } />
+            <LinearProgress color={ (updatePokemonOrderByRegionResult.isLoading || updateRegionsResult.isLoading) ? 'warning' : 'primary' } />
         }
       </Box>
       <DragDropContext onDragEnd={ handleOnDragEnd } onDragStart={ handleOnDragStart } onDragUpdate={ handleOnDragUpdate }>
@@ -204,4 +204,4 @@ function reorder<T>(list: T[], startIndex: number, endIndex: number): T[] {
   return result;
 }
 
-export default FilmsAll;
+export default PokemonsAll;

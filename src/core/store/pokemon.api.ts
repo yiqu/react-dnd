@@ -156,13 +156,40 @@ export const pokemonApi = createApi({
       }
     }),
 
-    updatePokemon: builder.mutation<Pokemon, UpdatePokemon>({
-      query: (args: UpdatePokemon) => {
+    updatePokemon: builder.mutation<Region, Region>({
+      query: (args: Region) => {
         return {
-          url: `${args.region}/pokemons/${args.index}.json`,
+          url: `${args.id}/pokemons.json`,
           method: 'PUT',
-          body: args
+          body: args.pokemons
         };
+      },
+      invalidatesTags: (result, error, args, meta) => {
+        return [];
+      },
+      async onQueryStarted(patchArgs: Region, apiActions) {
+        const cacheList = pokemonApi.util.selectInvalidatedBy(apiActions.getState(), [{ type: PokemonTag, id: patchArgs.id }]);
+        const patchResults: PatchCollection[] = [];
+
+        cacheList.forEach((cache) => {
+          if (cache.endpointName === "fetchPokemonsByRegion") {
+            const patchResult = apiActions.dispatch(
+              pokemonApi.util.updateQueryData('fetchPokemonsByRegion', cache.originalArgs, (draft) => {
+                Object.assign(draft, patchArgs);
+              })
+            );
+            patchResults.push(patchResult);
+          }
+        });
+
+        try {
+          await apiActions.queryFulfilled;
+        } catch {
+          patchResults.forEach((pr) => {
+            pr.undo();
+          });
+          apiActions.dispatch(pokemonApi.util.invalidateTags([{ type: PokemonTag, id: patchArgs.id }]));
+        }
       }
     }),
 
@@ -217,4 +244,4 @@ export const pokemonApi = createApi({
 
 
 export const { useFetchRegionListQuery, useFetchPokemonsByRegionQuery, useUpdateRegionsListMutation,
-  useUpdatePokemonOrderByRegionMutation, useAddPokemonMutation } = pokemonApi;
+  useUpdatePokemonOrderByRegionMutation, useAddPokemonMutation,  useUpdatePokemonMutation } = pokemonApi;

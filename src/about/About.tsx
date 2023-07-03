@@ -1,9 +1,12 @@
 import { Stack, Typography } from "@mui/material";
+import useScreenSize from "../shared/hooks/useScreensize";
 
 function About() {
 
+  const { isMobile } = useScreenSize();
+
   return (
-    <Stack direction="column" justifyContent="start" alignItems="start" width="100%" spacing={ 2 }>
+    <Stack direction="column" justifyContent="start" alignItems="start" width="100%" spacing={ 2 } padding={ isMobile ? '10px' : 0 }>
       <Typography variant="h6">Pokemon Drag N&apos; Drop</Typography>
       <Typography>
         This app is built to demonstrate drag and drop capabilities using 

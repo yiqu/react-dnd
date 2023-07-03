@@ -16,7 +16,7 @@ export interface HFSelectFieldProps {
 
 export type FieldProps = HFSelectFieldProps & SelectProps;
 
-function HFSelectField({ name, label, control, children, ...props }: FieldProps) {
+function HFSelectField({ name, label, control, children, helperText, ...props }: FieldProps) {
 
   return (
     <Controller
@@ -33,6 +33,7 @@ function HFSelectField({ name, label, control, children, ...props }: FieldProps)
             labelId=""
             id="select-id"
             label={ label }
+            { ...props }
             { ...field }
             error={ !!(error) }
           >
@@ -40,7 +41,7 @@ function HFSelectField({ name, label, control, children, ...props }: FieldProps)
           </Select>
           <FormHelperText id={ `${name}-helper-text` } error={ !!error } sx={ {ml: 0} } >
             {
-              <Typography variant="caption" color={ red } component="span"> { error ? error.message : props.helperText } </Typography>
+              <Typography variant="caption" color={ red } component="span"> { error ? error.message : helperText } </Typography>
             }
           </FormHelperText>
         </FormControl>

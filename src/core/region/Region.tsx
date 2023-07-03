@@ -88,7 +88,7 @@ function Region({ regionId, index }: RegionProps) {
                           {
                             pokemonData.map((pokemon: Pokemon, index: number) => {
                               return (
-                                <PokemonCard key={ pokemon.id } id={ pokemon.id } name={ pokemon.name } sprite={ pokemon.sprite } index={ index } />
+                                <PokemonCard key={ pokemon.id } id={ pokemon.id } name={ pokemon.name } sprite={ pokemon.sprite } index={ index } region={ regionId } />
                               );
                             })
                           }

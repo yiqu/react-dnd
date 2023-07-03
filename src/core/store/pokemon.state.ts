@@ -18,10 +18,10 @@ export interface NewPokemon {
 }
 
 export interface UpdatePokemon {
-  index: number;
   id: string;
   name: string;
   region: string;
+  index: number;
 }
 
 export interface FireResult {

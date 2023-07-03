@@ -12,7 +12,7 @@ import { skipToken } from '@reduxjs/toolkit/dist/query/react';
 import { Pokemon, REGIONS } from '../store/pokemon.state';
 import useScreenSize from '../../shared/hooks/useScreensize';
 import {produce} from "immer";
-import AddPokemon from '../actions/AddEditPokemon';
+import AddPokemon from '../actions/AddPokemon';
 
 function PokemonsAll() {
   const dispatch = useAppDispatch();

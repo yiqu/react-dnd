@@ -13,6 +13,8 @@ import { Pokemon, REGIONS } from '../store/pokemon.state';
 import useScreenSize from '../../shared/hooks/useScreensize';
 import {produce} from "immer";
 import AddPokemon from '../actions/AddPokemon';
+import { useAppendUserHistoryMutation } from '../../store/user-history/user-history.api';
+import { FirebasePostPayload } from '../../shared/models/firebase.model';
 
 function PokemonsAll() {
   const dispatch = useAppDispatch();
@@ -24,6 +26,7 @@ function PokemonsAll() {
   // Mutation hooks
   const [updateRegions, updateRegionsResult] = useUpdateRegionsListMutation();
   const [updatePokemonOrderByRegion, updatePokemonOrderByRegionResult] = useUpdatePokemonOrderByRegionMutation();
+  const [updateHistory, updateHistoryResult] = useAppendUserHistoryMutation();
 
   // Cross region mode
   const isCrossRegionAllowed = useAppSelector(selectAllowCrossRegionDrag);
@@ -85,9 +88,14 @@ function PokemonsAll() {
       const newOrdered = reorder<Pokemon>(dataCopy, result.source.index, result.destination.index);
       const regionId = result.type.split("-")[0];
       if (REGIONS.includes(regionId)) {
-        updatePokemonOrderByRegion({
+        const updateOrder$ = updatePokemonOrderByRegion({
           id: regionId,
           pokemons: newOrdered
+        });
+        updateOrder$.unwrap().then(() => {
+          const updateHistory$ = updateHistory("reorder-pokemon");
+          return updateHistory$.unwrap();
+        }).then((updateResult: FirebasePostPayload) => {
         });
       }
     } 

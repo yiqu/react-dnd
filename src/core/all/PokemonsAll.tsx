@@ -14,7 +14,6 @@ import useScreenSize from '../../shared/hooks/useScreensize';
 import {produce} from "immer";
 import AddPokemon from '../actions/AddPokemon';
 import { useAppendUserHistoryMutation } from '../../store/user-history/user-history.api';
-import { FirebasePostPayload } from '../../shared/models/firebase.model';
 
 function PokemonsAll() {
   const dispatch = useAppDispatch();
@@ -80,7 +79,17 @@ function PokemonsAll() {
     if (result.type === 'regions') {
       const dataCopy = [...data ?? []];
       const newOrdered = reorder<string>(dataCopy, result.source.index, result.destination.index);
-      updateRegions(newOrdered);
+      const update$ = updateRegions(newOrdered);
+      update$.unwrap().then(() => {
+        updateHistory({
+          actionEntity: 'region',
+          actionType: 'reorder',
+          actionEntitySource: "region-area",
+          actionEntitySourcePosition: result.source.index,
+          actionEntityTarget: "region-area",
+          actionEntityTargetPosition: result.destination!.index,
+        });
+      });
     }
     // Dragging Pokemons (cross region disabled)
     else if (result.type.includes('-pokemons')) {
@@ -93,9 +102,14 @@ function PokemonsAll() {
           pokemons: newOrdered
         });
         updateOrder$.unwrap().then(() => {
-          const updateHistory$ = updateHistory("reorder-pokemon");
-          return updateHistory$.unwrap();
-        }).then((updateResult: FirebasePostPayload) => {
+          updateHistory({
+            actionEntity: 'pokemon',
+            actionType: 'reorder',
+            actionEntitySource: regionId,
+            actionEntitySourcePosition: result.source.index,
+            actionEntityTarget: regionId,
+            actionEntityTargetPosition: result.destination!.index,
+          });
         });
       }
     } 
@@ -107,9 +121,19 @@ function PokemonsAll() {
         const newOrdered = reorder<Pokemon>(dataCopy, result.source.index, result.destination.index);
         const regionId = pokemonsByRegion.data.id;
         if (REGIONS.includes(regionId)) {
-          updatePokemonOrderByRegion({
+          const update$ = updatePokemonOrderByRegion({
             id: regionId,
             pokemons: newOrdered
+          });
+          update$.unwrap().then(() => {
+            updateHistory({
+              actionEntity: 'pokemon',
+              actionType: 'reorder',
+              actionEntitySource: regionId,
+              actionEntitySourcePosition: result.source.index,
+              actionEntityTarget: regionId,
+              actionEntityTargetPosition: result.destination!.index,
+            });
           });
         }
       } 
@@ -131,6 +155,15 @@ function PokemonsAll() {
         if (REGIONS.includes(nextDestPokemons.id)) {
           updatePokemonOrderByRegion(nextDestPokemons);
         }
+
+        updateHistory({
+          actionEntity: 'pokemon',
+          actionType: 'reorder',
+          actionEntitySource: nextSourcePokemons.id,
+          actionEntitySourcePosition: result.source.index,
+          actionEntityTarget: nextDestPokemons.id,
+          actionEntityTargetPosition: result.destination!.index,
+        });
       }
     }
   };
@@ -199,7 +232,6 @@ function PokemonsAll() {
         </Droppable>
       </DragDropContext>
       
-      <Divider flexItem variant='fullWidth' />
     </Box>
   );
 }

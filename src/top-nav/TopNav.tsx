@@ -22,7 +22,7 @@ export interface TopNavProps {
 
 export default function TopNav() {
 
-  const pages = ['Pokemons', 'About'];
+  const pages = ['Pokemons', 'History', 'About'];
 
   const location = useLocation();
   // const [title, setTitle] = useState<string>();

@@ -17,3 +17,18 @@ export const isDraggingStyles: CSSProperties = {
   border: '2px solid',
   borderColor: 'primary.main'
 };
+
+export const stickyHeaderClass = {
+  position: 'sticky',
+  left: 0,
+  zIndex: 3,
+  width:'18rem' // initial for no table scrollbar
+};
+
+export const stickyDataCellClass = {
+  position: 'sticky',
+  left: 0, 
+  minWidth: '18rem', // initial for no table scrollbar
+  maxWidth: '18rem',
+  backgroundColor: '#fff'
+};

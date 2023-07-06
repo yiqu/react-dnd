@@ -1,3 +1,4 @@
+import { shortenUserAgentHash } from "../../shared/utils/user-agent";
 import { RootState } from "../appStore";
 import { createSelector } from "@reduxjs/toolkit";
 
@@ -5,9 +6,10 @@ const authSlice = (state: RootState) => {
   return state.auth;
 };
 
-export const getUser = createSelector(
+export const getUserHashShort = createSelector(
   authSlice,
   (slice): string => {
-    return slice.user;
+    const short = shortenUserAgentHash(slice.user.userHash);
+    return short;
   }
 );

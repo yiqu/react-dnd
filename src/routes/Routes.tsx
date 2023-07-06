@@ -2,7 +2,7 @@
 import { Router } from '@remix-run/router';
 import { Navigate, createBrowserRouter } from 'react-router-dom';
 import Layout from './Layout';
-import { NotFoundLazy, PokemonsLayout, PokemonsAllLayout, AboutLazy } from './LazyComps';
+import { NotFoundLazy, PokemonsLayout, PokemonsAllLayout, AboutLazy, HistoryLazy } from './LazyComps';
 
 
 const routeList: Router = createBrowserRouter([
@@ -25,6 +25,10 @@ const routeList: Router = createBrowserRouter([
       {
         path: 'about',
         element: <AboutLazy />
+      },
+      {
+        path: 'history',
+        element: <HistoryLazy />
       },
     ]
   }

@@ -1,3 +1,8 @@
 export interface AuthState {
-  user: string;
+  user: User;
+}
+
+export interface User {
+  userHash: string;
+  userAgent?: UAParser.IResult;
 }

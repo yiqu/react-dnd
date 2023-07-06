@@ -16,6 +16,7 @@ import { skipToken } from "@reduxjs/toolkit/dist/query/react";
 import { BASE_POKEMON_SPRITE_URL } from "../../shared/api/endpoints";
 import produce from "immer";
 import { DevTool } from "@hookform/devtools";
+import { useAppendUserHistoryMutation } from "../../store/user-history/user-history.api";
 
 
 export interface AddEditPokemonFormProps { 
@@ -41,6 +42,7 @@ function AddEditPokemonForm({ initValue, mode, onClose }: AddEditPokemonFormProp
   });
   const [addNewPokemon, addNewPokemonResult] = useAddPokemonMutation();
   const [updatePokemon, updatePokemonResult] = useUpdatePokemonMutation();
+  const [updateHistory, updateHistoryResult] = useAppendUserHistoryMutation();
   const apiLoading: boolean = isFetchRegionListFetching || isFetchPokemonsByRegionFetching || addNewPokemonResult.isLoading || updatePokemonResult.isLoading;
 
 
@@ -81,6 +83,15 @@ function AddEditPokemonForm({ initValue, mode, onClose }: AddEditPokemonFormProp
           console.log(error);
         });
       }
+
+      updateHistory({
+        actionEntity: 'pokemon',
+        actionType: mode,
+        actionEntitySource: pokemonListByRegion.id,
+        actionEntitySourcePosition: initValue?.name ?? '',
+        actionEntityTarget: pokemonListByRegion.id,
+        actionEntityTargetPosition: pokemon.name,
+      });
     }
   };
 

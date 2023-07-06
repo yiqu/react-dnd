@@ -5,12 +5,16 @@ import pokemonConfigSliceReducer, { pokemonConfigSlice } from '../core/store/pok
 import { pokemonApi } from '../core/store/pokemon.api';
 import { persistStore } from 'redux-persist';
 import {FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER} from 'redux-persist';
+import { userHistoryApi } from './user-history/user-history.api';
+import userHistoryConfigSliceReducer, { userHistoryConfigSlice } from './user-history/user-history.reducer';
 
 export const appStore = configureStore({
   reducer: {
     auth: authSliceReducer,
     [pokemonApi.reducerPath]: pokemonApi.reducer,
-    [pokemonConfigSlice.name]: pokemonConfigSliceReducer
+    [pokemonConfigSlice.name]: pokemonConfigSliceReducer,
+    [userHistoryApi.reducerPath]: userHistoryApi.reducer,
+    [userHistoryConfigSlice.name]: userHistoryConfigSliceReducer,
   },
 
   // Adding the api middleware enables caching, invalidation, polling,
@@ -22,7 +26,7 @@ export const appStore = configureStore({
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER] // needed for Redux-persist
       },
       thunk: true,
-    }).concat(pokemonApi.middleware);
+    }).concat(pokemonApi.middleware).concat(userHistoryApi.middleware);
   },
   
   devTools: {

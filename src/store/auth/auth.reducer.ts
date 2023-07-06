@@ -1,17 +1,20 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import { AuthState } from './auth.state';
+import { AuthState, User } from './auth.state';
 
 const initialState: AuthState = {
-  user: 'qu'
+  user: {
+    userHash: '0000',
+    userAgent: undefined
+  }
 };
 
 const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    updateUser: (state, action: PayloadAction<string>) => {
+    updateUser: (state, action: PayloadAction<User>) => {
       state.user = action.payload;
     }
   },

@@ -1,4 +1,4 @@
-import { Box, Button, DialogContent, Divider, LinearProgress, List, ListItem, ListItemText, Skeleton, Stack, Typography } from '@mui/material';
+import { Box, Button, DialogContent, Divider, LinearProgress, List, ListItem, ListItemText, Skeleton, Stack, Typography, useTheme } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { useGetUserHistoryQuery } from '../store/user-history/user-history.api';
 import ErrorPage from '../404/ErrorPage';
@@ -25,9 +25,8 @@ import { shortenUserAgentHash } from '../shared/utils/user-agent';
 import DialogLayout from '../shared/components/dialog/DialogLayout';
 
 
-
 function HistoryList() {
-
+  const {palette: { mode }} = useTheme();
   const { data, sortedByDate, isError, isLoading, isFetching, refetch, error } = useGetUserHistoryQuery(undefined, {
     selectFromResult: (data) => {
       const copy = produce(data.data, draft => {
@@ -133,7 +132,7 @@ function HistoryList() {
               sortedByDate.map((history: UserHistory) => (
                 <TableRow
                   key={ history.fireId }
-                  sx={ { '&:hover': {backgroundColor: GREY[300]} } }
+                  sx={ { '&:hover': { backgroundColor: mode === 'light' ? GREY[0] : '#000' } } }
                 >
                   {
                     TABLE_COLUMNS.map((col, index) => {

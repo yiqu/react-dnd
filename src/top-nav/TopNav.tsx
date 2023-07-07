@@ -58,7 +58,7 @@ export default function TopNav() {
           <Toolbar>
             <Stack direction="row" justifyContent="center" alignItems="center" mr={ 2 }
               component={ Link } to={ "/" }>
-              <Image src="/snorlax.png" height={ '30px' } alt="logo" showLoading />
+              <Image src="/logo1.png" height={ '64px' } alt="logo" />
             </Stack>
             <Stack direction="row" justifyContent="space-between" alignItems="center" width="100%">
               <Stack direction="row" justifyContent="start" alignItems="center">

@@ -22,27 +22,19 @@ const Layout = () => {
 
   return (
     <ThemeProvider theme={ theme }>
-      <Box sx={ { display: 'flex', height: '100%' } } mb={ 5 } id="main-box">
+      <Box sx={ { display: 'flex', height: '100%', bgcolor:(theme) => theme.palette.mode === 'light' ? GREY[0] : '#000' } } pb={ 5 } id="main-box">
 
-        <Box component="main" sx={ { flexGrow: 1, bgcolor:(theme) => theme.palette.mode === 'light' ? GREY[0] : null } }>
+        <Box component="main" sx={ { flexGrow: 1 } }>
 
-          <Grid container xs={ 12 } sx={ {
-            bgcolor:(theme) => theme.palette.mode === 'light' ? GREY[0] : '#000',
-            background: 'url(logo1.png)',
-            backgroundRepeat: 'no-repeat',
-            backgroundSize: '10rem',
-            backgroundPosition: '95% 100%'
-          } }>
+          <Grid container xs={ 12 }>
             <LayoutWithGutter size='skinny'>
               <>
                 <TopNav />
-            
                 <Outlet />
               </>
             </LayoutWithGutter>
-            
-
           </Grid>
+          
         </Box>
         <Toaster
           position="top-center"

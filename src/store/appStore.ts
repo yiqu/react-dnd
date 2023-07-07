@@ -32,7 +32,8 @@ export const appStore = configureStore({
   devTools: {
     trace: true,
     name: 'Pokemon Drag And Drop',
-    actionsDenylist: ['__rtkq/focused', '__rtkq/unfocused']
+    actionsDenylist: ['__rtkq/focused', '__rtkq/unfocused'],
+    maxAge: import.meta.env.PROD ? 5 : 30,
   },
 });
 

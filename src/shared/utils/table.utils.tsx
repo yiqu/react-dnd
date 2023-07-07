@@ -4,22 +4,20 @@ import { ellipsis } from "./css.utils";
 
 export const StyledHeaderCell = styled(TableCell)(() => ({
   ...ellipsis,
-  paddingTop: '10px',
-  paddingBottom: '10px',
-  fontSize: '15px',
+  paddingTop: '5px',
+  paddingBottom: '5px',
+  fontSize: '12px',
   borderRight: `1px solid ${GREY[400]}`,
   borderColor: GREY[400],
   backgroundColor: GREY[200],
-  maxWidth: '15rem', // the max width data cells can have
 }));
 
 export const StyledDataCell = styled(TableCell)(() => ({
   ...ellipsis,
-  paddingTop: '10px',
-  paddingBottom: '10px',
-  fontSize: '14px',
+  paddingTop: '5px',
+  paddingBottom: '5px',
+  fontSize: '10px',
   //borderRight: `1px solid ${GREY[300]}`,
   borderBottom: "none",
-  maxWidth: '15rem', // the max width data cells can have
 }));
 

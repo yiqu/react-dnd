@@ -22,7 +22,7 @@ const Layout = () => {
 
   return (
     <ThemeProvider theme={ theme }>
-      <Box sx={ { display: 'flex', height: '100%' } }>
+      <Box sx={ { display: 'flex', height: '100%' } } mb={ 5 } id="main-box">
 
         <Box component="main" sx={ { flexGrow: 1, bgcolor:(theme) => theme.palette.mode === 'light' ? GREY[0] : null } }>
 

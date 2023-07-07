@@ -155,7 +155,7 @@ function AddEditPokemonForm({ initValue, mode, onClose }: AddEditPokemonFormProp
         </Stack>
       </DialogActions>
       
-      <DevTool control={ control } />
+      { import.meta.env.DEV && <DevTool control={ control } />}
     </>
   );
 }
